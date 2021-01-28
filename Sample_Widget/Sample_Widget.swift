@@ -24,41 +24,31 @@ struct Provider: IntentTimelineProvider {
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
-        for hourOffset in 0 ..< 1 {
+        for hourOffset in 0 ..< 5 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            var entry = SimpleEntry(date: entryDate,configuration: configuration)
-
-            let group = DispatchGroup()
-
-            group.enter()
-            ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png")!) { image in
-                entry.homeTeamLogo = image
-
-                ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/arctichare.png")!) { image in
-                    entry.awayTeamLogo = image
-
-                    entries.append(entry)
-
-                    let timeline = Timeline(entries: entries, policy: .atEnd)
-                    completion(timeline)
-                }
-            }
-
+            let entry = SimpleEntry(date: entryDate,
+                                    configuration: configuration,
+                                    homeTeamLogoURL: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png")!,
+                                    awayTeamLogoURL: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/boat.png")!)
+            entries.append(entry)
         }
+
+        let timeline = Timeline(entries: entries, policy: .atEnd)
+        completion(timeline)
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationIntent
-    var homeTeamLogo: UIImage?
-    var awayTeamLogo: UIImage?
+    var homeTeamLogoURL: URL?
+    var awayTeamLogoURL: URL?
 
-    init(date: Date, configuration: ConfigurationIntent, homeTeamLogo: UIImage? = nil, awayTeamLogo: UIImage? = nil) {
+    init(date: Date, configuration: ConfigurationIntent, homeTeamLogoURL: URL? = nil, awayTeamLogoURL: URL? = nil) {
         self.date = date
         self.configuration = configuration
-        self.homeTeamLogo = homeTeamLogo
-        self.awayTeamLogo = awayTeamLogo
+        self.homeTeamLogoURL = homeTeamLogoURL
+        self.awayTeamLogoURL = awayTeamLogoURL
     }
 }
 
@@ -68,7 +58,7 @@ struct Sample_WidgetEntryView : View {
     var body: some View {
         ZStack {
             Color.appBlack.edgesIgnoringSafeArea(.all)
-            BoxScoreSmallView(homeTeamLogo: entry.homeTeamLogo, awayTeamLogo: entry.awayTeamLogo)
+            BoxScoreSmallView(homeTeamLogoURL: entry.homeTeamLogoURL, awayTeamLogoURL: entry.awayTeamLogoURL)
         }
     }
 }

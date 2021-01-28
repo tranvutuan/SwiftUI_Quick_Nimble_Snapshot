@@ -18,9 +18,8 @@ struct BoxScoreSmallView: View {
 
         return image
     }
-
-    let homeTeamLogo: UIImage?
-    let awayTeamLogo: UIImage?
+    let homeTeamLogoURL: URL?
+    let awayTeamLogoURL: URL?
 
 	var body: some View {
 		VStack(spacing: Dimensions.spacingMedium) {
@@ -31,8 +30,8 @@ struct BoxScoreSmallView: View {
                     .foregroundColor(.appWhite)
 			}
             HStack(spacing: 27) {
-                TeamInfoView(logo: homeTeamLogo ?? UIImage(), team: "TOR", score: "6")
-                TeamInfoView(logo: awayTeamLogo ?? UIImage(), team: "EDM", score: "8")
+                TeamInfoView(team: "TOR", score: "6", logoURL: homeTeamLogoURL)
+                TeamInfoView(team: "EDM", score: "8", logoURL: awayTeamLogoURL)
 			}
 		}
 		.padding(.all, Dimensions.spacingLarge)

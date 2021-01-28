@@ -11,18 +11,14 @@ import SwiftUI
 struct TeamInfoView: View {
 	// MARK: Properties
 
-    let logo: UIImage
 	let team: String
 	let score: String
-
+    let logoURL: URL?
+    
 	var body: some View {
 		VStack(spacing: Dimensions.spacing) {
 			VStack(spacing: Dimensions.spacingSmall / 2) {
-                Image(uiImage: logo)
-                    .resizable()
-					.frame(width: 30, height: 30)
-                    .cornerRadius(2)
-					.aspectRatio(contentMode: .fit)
+                NetworkImage(url: logoURL)
 				Text(team)
 					.font(FontStyles.bodyStyle)
 					.foregroundColor(.appWhite)
@@ -33,4 +29,23 @@ struct TeamInfoView: View {
 				.foregroundColor(.appWhite)
 		}
 	}
+}
+
+struct NetworkImage: View {
+    let url: URL?
+
+    var body: some View {
+        Group {
+            if let url = url, let imageData = try? Data(contentsOf: url), let uiImage = UIImage(data: imageData) {
+
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .frame(width: 40, height: 40)
+                    .aspectRatio(contentMode: .fit)
+            }
+            else {
+                Image("Toronto_maple")
+            }
+        }
+    }
 }
