@@ -11,15 +11,16 @@ import SwiftUI
 struct TeamInfoView: View {
 	// MARK: Properties
 
-    let logo: String
+    let logo: UIImage
 	let team: String
 	let score: String
 
 	var body: some View {
 		VStack(spacing: Dimensions.spacing) {
 			VStack(spacing: Dimensions.spacingSmall / 2) {
-				Image(logo)
-					.frame(width: 40, height: 40)
+                Image(uiImage: logo)
+                    .resizable()
+					.frame(width: 30, height: 30)                    
 					.aspectRatio(contentMode: .fit)
 				Text(team)
 					.font(FontStyles.bodyStyle)
