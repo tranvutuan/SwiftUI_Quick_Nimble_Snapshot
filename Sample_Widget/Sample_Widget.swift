@@ -24,20 +24,42 @@ struct Provider: IntentTimelineProvider {
 
         // Generate a timeline consisting of five entries an hour apart, starting from the current date.
         let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
+        for hourOffset in 0 ..< 1 {
             let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }
+            var entry = SimpleEntry(date: entryDate,configuration: configuration)
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
-        completion(timeline)
+            let group = DispatchGroup()
+
+            group.enter()
+            ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png")!) { image in
+                entry.homeTeamLogo = image
+
+                ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/arctichare.png")!) { image in
+                    entry.awayTeamLogo = image
+
+                    entries.append(entry)
+
+                    let timeline = Timeline(entries: entries, policy: .atEnd)
+                    completion(timeline)
+                }
+            }
+
+        }
     }
 }
 
 struct SimpleEntry: TimelineEntry {
     let date: Date
     let configuration: ConfigurationIntent
+    var homeTeamLogo: UIImage?
+    var awayTeamLogo: UIImage?
+
+    init(date: Date, configuration: ConfigurationIntent, homeTeamLogo: UIImage? = nil, awayTeamLogo: UIImage? = nil) {
+        self.date = date
+        self.configuration = configuration
+        self.homeTeamLogo = homeTeamLogo
+        self.awayTeamLogo = awayTeamLogo
+    }
 }
 
 struct Sample_WidgetEntryView : View {
@@ -46,7 +68,7 @@ struct Sample_WidgetEntryView : View {
     var body: some View {
         ZStack {
             Color.appBlack.edgesIgnoringSafeArea(.all)
-            BoxScoreSmallView()
+            BoxScoreSmallView(homeTeamLogo: entry.homeTeamLogo, awayTeamLogo: entry.awayTeamLogo)
         }
     }
 }
