@@ -23,12 +23,44 @@ class ImageLoader: ObservableObject {
     }()
 
     func load(url: URL, completion: @escaping (UIImage?) -> Void) {
+        if let data = ImageCache.data(for: url) {
+            completion(UIImage(data: data))
+            
+            return
+        }
+
         let task = Self.session.dataTask(with: url) { data, response, error in
             guard let data = data else { return }
 
-//            ImageCache.set(data, for: url)
+            ImageCache.set(data, for: url)
+
             completion(UIImage(data: data))
         }
         task.resume()
+    }
+}
+
+private enum ImageCache {
+    private static let cachePath = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+
+    static func data(for url: URL) -> Data? {
+        Self.filePath(for: url).flatMap {
+            try? Data(contentsOf: $0)
+        }
+    }
+
+    static func set(_ data: Data?, for url: URL) {
+        guard let data = data, let filePath = Self.filePath(for: url) else { return }
+
+        do {
+            try data.write(to: filePath, options: .atomicWrite)
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    private static func filePath(for url: URL) -> URL? {
+        cachePath?.appendingPathComponent("\(url.absoluteString.hash)", isDirectory: false)
     }
 }

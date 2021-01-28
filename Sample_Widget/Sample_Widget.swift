@@ -29,13 +29,13 @@ struct Provider: IntentTimelineProvider {
         let group = DispatchGroup()
 
         group.enter()
-        ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/airplane.png")!) { image in
+        ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/girl.png")!) { image in
             entry.homeTeamLogo = image
             group.leave()
         }
 
         group.enter()
-        ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/boat.png")!) { image in
+        ImageLoader().load(url: URL(string: "https://homepages.cae.wisc.edu/~ece533/images/monarch.png")!) { image in
             entry.awayTeamLogo = image
             group.leave()
         }
